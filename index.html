@@ -1,0 +1,2282 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#080808">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>mentalidade</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    -webkit-tap-highlight-color:transparent;
+}
+
+:root{
+    --bg:#080808;
+    --card:#111111;
+    --card2:#181818;
+    --line:#292929;
+    --text:#f7f7f7;
+    --muted:#969696;
+    --green:#38e27f;
+    --green2:#1dbb61;
+    --blue:#4da3ff;
+    --yellow:#ffc857;
+    --red:#ff6262;
+    --purple:#9b7cff;
+    --transition:.3s cubic-bezier(.2,.8,.2,1);
+}
+
+html{
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+}
+
+body{
+    font-family:'Inter',system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    min-height:100vh;
+    overflow-x:hidden;
+    font-feature-settings:"tnum";
+    letter-spacing:-.01em;
+    /* mantém só UM gradiente leve em vez de três */
+    background-image:
+        radial-gradient(ellipse 80% 50% at 20% 0%, rgba(56,226,127,.04) 0%, transparent 60%);
+    background-attachment:fixed;
+}
+
+button,
+input{
+    font:inherit;
+    color:inherit;
+}
+
+button{
+    border:0;
+    cursor:pointer;
+    transition:var(--transition);
+    font-family:inherit;
+    position:relative;
+    overflow:hidden;
+    /* força aceleração por GPU só onde importa */
+    transform:translateZ(0);
+}
+
+button:active{
+    transform:scale(.96);
+}
+
+input{
+    outline:none;
+    transition:var(--transition);
+}
+
+input:focus{
+    border-color:var(--green);
+    box-shadow:0 0 0 3px rgba(56,226,127,.12);
+}
+
+/* =========================
+   SPLASH — mantém impacto, roda liso
+========================= */
+
+#splash{
+    position:fixed;
+    inset:0;
+    background:#050505;
+    z-index:9999;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    transition:opacity .8s ease, visibility .8s ease;
+}
+
+#splash.hide{
+    opacity:0;
+    visibility:hidden;
+}
+
+.logoMark{
+    width:88px;
+    height:88px;
+    border-radius:26px;
+    background:linear-gradient(160deg,#fff 0%,#d8d8d8 100%);
+    color:#050505;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:52px;
+    font-weight:900;
+    letter-spacing:-2px;
+    box-shadow:0 0 45px rgba(255,255,255,.15),
+               0 20px 60px rgba(0,0,0,.6);
+    animation:logoDrop 1.2s cubic-bezier(.2,1.2,.4,1);
+    will-change:transform,opacity;
+}
+
+@keyframes logoDrop{
+    0%{
+        opacity:0;
+        transform:scale(.3) translateY(-80px) rotate(-25deg);
+    }
+    45%{
+        opacity:1;
+        transform:scale(1.15) translateY(0) rotate(4deg);
+    }
+    65%{transform:scale(.95) rotate(-2deg);}
+    80%{transform:scale(1.04) rotate(1deg);}
+    100%{transform:scale(1) rotate(0);}
+}
+
+.splashLoading{
+    margin-top:32px;
+    width:120px;
+    height:3px;
+    border-radius:10px;
+    background:#1a1a1a;
+    overflow:hidden;
+    opacity:0;
+    animation:loadingWrapIn .4s ease 1.2s forwards;
+}
+
+@keyframes loadingWrapIn{ to{opacity:1} }
+
+.splashLoading span{
+    display:block;
+    width:0;
+    height:100%;
+    background:linear-gradient(90deg,#fff,var(--green));
+    animation:loading 1.4s cubic-bezier(.4,0,.2,1) 1.3s forwards;
+    border-radius:10px;
+}
+
+.splashName{
+    margin-top:26px;
+    display:flex;
+    gap:1px;
+    min-height:40px;
+}
+
+.splashName span{
+    font-size:32px;
+    font-weight:800;
+    opacity:0;
+    transform:translateY(-30px) rotateX(-90deg);
+    animation:letterDrop .5s cubic-bezier(.2,1.2,.4,1) forwards;
+    letter-spacing:-1.2px;
+    background:linear-gradient(180deg,#fff,#999);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    background-clip:text;
+    display:inline-block;
+    will-change:transform,opacity;
+}
+
+@keyframes letterDrop{
+    0%{opacity:0;transform:translateY(-30px) rotateX(-90deg) scale(.8);}
+    100%{opacity:1;transform:translateY(0) rotateX(0) scale(1);}
+}
+
+.splashSub{
+    color:#666;
+    font-size:12px;
+    margin-top:12px;
+    opacity:0;
+    animation:subIn .6s ease 2.6s forwards;
+    letter-spacing:.4px;
+    font-weight:500;
+}
+
+@keyframes subIn{ to{opacity:1} }
+
+@keyframes loading{
+    0%{width:0}
+    100%{width:100%}
+}
+
+/* =========================
+   APP
+========================= */
+
+#app{
+    display:none;
+    min-height:100vh;
+    padding-bottom:100px;
+}
+
+#app.revealing{
+    display:block;
+    animation:appReveal .6s ease;
+}
+
+@keyframes appReveal{
+    from{opacity:0;}
+    to{opacity:1;}
+}
+
+.container{
+    width:min(100%,600px);
+    margin:auto;
+    padding:24px 17px 30px;
+}
+
+.screen{
+    display:none;
+}
+
+.screen.active{
+    display:block;
+    /* animação suave mas barata */
+    animation:screenIn .35s ease;
+}
+
+@keyframes screenIn{
+    from{opacity:0;transform:translateY(8px);}
+    to{opacity:1;transform:translateY(0);}
+}
+
+.top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:24px;
+}
+
+.eyebrow{
+    color:var(--green);
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    margin-bottom:7px;
+    display:flex;
+    align-items:center;
+    gap:6px;
+}
+
+.eyebrow::before{
+    content:"";
+    width:14px;
+    height:1px;
+    background:var(--green);
+}
+
+h1{
+    font-size:31px;
+    line-height:1.02;
+    letter-spacing:-1.4px;
+    font-weight:800;
+    background:linear-gradient(180deg,#fff 30%,#a0a0a0 100%);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    background-clip:text;
+}
+
+h2{
+    font-size:19px;
+    letter-spacing:-.5px;
+    font-weight:800;
+}
+
+.muted{ color:var(--muted); }
+
+/* ---------- botões ---------- */
+
+.iconBtn{
+    width:46px;
+    height:46px;
+    border-radius:16px;
+    background:#1a1a1a;
+    border:1px solid var(--line);
+    color:white;
+    font-size:19px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.iconBtn:hover{
+    background:#202020;
+    border-color:#3a3a3a;
+}
+
+.iconBtn:active{
+    transform:scale(.92);
+}
+
+.primary{
+    width:100%;
+    min-height:56px;
+    border-radius:18px;
+    background:linear-gradient(135deg,#38e27f 0%,#1dbb61 100%);
+    color:#031007;
+    font-weight:800;
+    font-size:15px;
+    letter-spacing:-.2px;
+    box-shadow:0 8px 24px rgba(56,226,127,.2),
+               0 2px 6px rgba(0,0,0,.3);
+}
+
+.primary:active{
+    transform:scale(.97);
+    filter:brightness(.95);
+}
+
+.secondary{
+    width:100%;
+    min-height:54px;
+    border-radius:18px;
+    background:#1a1a1a;
+    color:white;
+    border:1px solid var(--line);
+    font-weight:800;
+    font-size:14px;
+}
+
+.secondary:active{
+    background:#222;
+    transform:scale(.97);
+}
+
+/* ---------- HOME ---------- */
+
+.hero{
+    padding:26px 24px 24px;
+    border-radius:30px;
+    background:linear-gradient(160deg,#171717 0%,#0d0d0d 100%);
+    border:1px solid #2a2a2a;
+    margin-bottom:16px;
+    position:relative;
+    overflow:hidden;
+    box-shadow:0 12px 32px rgba(0,0,0,.5);
+}
+
+.hero::before{
+    content:"";
+    position:absolute;
+    width:200px;
+    height:200px;
+    border-radius:50%;
+    background:radial-gradient(circle,rgba(56,226,127,.15),transparent 70%);
+    right:-60px;
+    top:-60px;
+    pointer-events:none;
+}
+
+.heroTop{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    position:relative;
+    z-index:1;
+    gap:12px;
+}
+
+.heroTitle{
+    font-size:26px;
+    font-weight:900;
+    letter-spacing:-1px;
+    line-height:1.15;
+}
+
+.heroDate{
+    color:var(--muted);
+    font-size:11.5px;
+    margin-top:7px;
+    font-weight:500;
+}
+
+.mainProgress{
+    height:10px;
+    background:#1a1a1a;
+    border-radius:10px;
+    margin-top:26px;
+    overflow:hidden;
+    position:relative;
+    z-index:1;
+}
+
+.mainProgress span{
+    display:block;
+    height:100%;
+    border-radius:10px;
+    background:linear-gradient(90deg,#1dbb61,#38e27f);
+    transition:width .8s cubic-bezier(.2,.8,.2,1);
+    box-shadow:0 0 12px rgba(56,226,127,.4);
+}
+
+.heroStats{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-top:18px;
+    position:relative;
+    z-index:1;
+}
+
+.stat{
+    background:rgba(255,255,255,.05);
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:16px;
+    padding:13px 14px;
+}
+
+.stat small{
+    display:block;
+    color:var(--muted);
+    font-size:9.5px;
+    margin-bottom:5px;
+    text-transform:uppercase;
+    letter-spacing:.8px;
+    font-weight:700;
+}
+
+.stat strong{
+    font-size:16.5px;
+    letter-spacing:-.4px;
+    font-weight:800;
+}
+
+.sectionTitle{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    margin:28px 2px 14px;
+}
+
+.sectionTitle span{
+    color:var(--muted);
+    font-size:11.5px;
+    font-weight:500;
+}
+
+.objectiveCard{
+    background:#131313;
+    border:1px solid var(--line);
+    border-radius:22px;
+    padding:18px;
+    margin-bottom:12px;
+    box-shadow:0 4px 12px rgba(0,0,0,.3);
+}
+
+.objectiveCard:active{
+    transform:scale(.99);
+}
+
+.objectiveHead{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    align-items:flex-start;
+}
+
+.objectiveName{
+    font-weight:900;
+    font-size:16px;
+    letter-spacing:-.3px;
+    line-height:1.2;
+}
+
+.objectiveAmount{
+    color:var(--green);
+    font-weight:900;
+    white-space:nowrap;
+    letter-spacing:-.3px;
+    font-size:15px;
+}
+
+.miniProgress{
+    height:7px;
+    background:#1a1a1a;
+    border-radius:10px;
+    margin:14px 0 11px;
+    overflow:hidden;
+}
+
+.miniProgress span{
+    display:block;
+    height:100%;
+    background:linear-gradient(90deg,#1dbb61,#38e27f);
+    border-radius:10px;
+    transition:width .7s cubic-bezier(.2,.8,.2,1);
+}
+
+.objectiveInfo{
+    display:flex;
+    justify-content:space-between;
+    color:var(--muted);
+    font-size:11px;
+    font-weight:500;
+}
+
+.todayCard{
+    background:#181818;
+    border:1px solid var(--line);
+    border-radius:24px;
+    padding:22px 20px;
+    box-shadow:0 8px 24px rgba(0,0,0,.4);
+}
+
+.todayAmount{
+    font-size:34px;
+    font-weight:900;
+    margin:8px 0;
+    letter-spacing:-1.5px;
+    background:linear-gradient(180deg,#fff 30%,#a8a8a8 100%);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    background-clip:text;
+    font-variant-numeric:tabular-nums;
+}
+
+.todayGrid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-top:16px;
+}
+
+.todayMini{
+    padding:13px 14px;
+    background:#0c0c0c;
+    border-radius:15px;
+    border:1px solid #1e1e1e;
+}
+
+.todayMini small{
+    display:block;
+    color:var(--muted);
+    font-size:10px;
+    margin-bottom:4px;
+    text-transform:uppercase;
+    letter-spacing:.6px;
+    font-weight:600;
+}
+
+.todayMini b{
+    font-size:14px;
+    font-weight:800;
+    letter-spacing:-.2px;
+    font-variant-numeric:tabular-nums;
+}
+
+/* ---------- form ---------- */
+
+.formCard{
+    background:#131313;
+    border:1px solid var(--line);
+    border-radius:24px;
+    padding:22px 20px;
+}
+
+.label{
+    display:block;
+    color:var(--muted);
+    font-size:11.5px;
+    font-weight:700;
+    margin-bottom:9px;
+    letter-spacing:.4px;
+    text-transform:uppercase;
+}
+
+.input{
+    width:100%;
+    height:56px;
+    border-radius:16px;
+    border:1px solid var(--line);
+    background:#0b0b0b;
+    color:white;
+    padding:0 16px;
+    font-size:16px;
+    font-weight:600;
+}
+
+.input::placeholder{ color:#444;font-weight:500; }
+
+.input:focus{
+    border-color:var(--green);
+    box-shadow:0 0 0 3px rgba(56,226,127,.12);
+}
+
+.formGroup{ margin-bottom:18px; }
+
+.moneyInput{
+    font-size:28px;
+    font-weight:900;
+    letter-spacing:-.8px;
+    height:62px;
+}
+
+/* ---------- sim ---------- */
+
+.simResult{
+    margin-top:18px;
+    padding:20px;
+    border-radius:20px;
+    background:#0c0c0c;
+    border:1px solid #242424;
+}
+
+.simResult strong{
+    font-size:22px;
+    letter-spacing:-.6px;
+    font-weight:900;
+    display:block;
+    margin-top:6px;
+}
+
+.simRows{
+    display:grid;
+    gap:10px;
+    margin-top:16px;
+}
+
+.simRow{
+    display:flex;
+    justify-content:space-between;
+    color:var(--muted);
+    font-size:12.5px;
+    padding:6px 0;
+    border-bottom:1px solid rgba(255,255,255,.04);
+    font-weight:500;
+}
+
+.simRow:last-child{
+    border-bottom:none;
+    padding-bottom:0;
+}
+
+.simRow b{
+    color:white;
+    font-weight:800;
+    font-variant-numeric:tabular-nums;
+}
+
+/* ---------- calendário ---------- */
+
+.calendarCard{
+    background:#131313;
+    border:1px solid var(--line);
+    border-radius:24px;
+    padding:18px;
+}
+
+.calendarHead{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:16px;
+}
+
+.calendarHead strong{
+    font-size:15px;
+    letter-spacing:-.3px;
+    text-transform:capitalize;
+    font-weight:800;
+}
+
+.calendarGrid{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    gap:5px;
+}
+
+.week{
+    text-align:center;
+    color:#555;
+    font-size:9.5px;
+    padding-bottom:6px;
+    font-weight:800;
+    text-transform:uppercase;
+    letter-spacing:.8px;
+}
+
+.day{
+    min-height:46px;
+    border-radius:12px;
+    background:#0c0c0c;
+    border:1px solid #1c1c1c;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    font-size:12px;
+    font-weight:600;
+    position:relative;
+    transition:border-color .2s ease, background .2s ease;
+}
+
+.day.done{
+    border-color:rgba(56,226,127,.55);
+    background:rgba(56,226,127,.09);
+}
+
+.day.over{
+    border-color:rgba(77,163,255,.6);
+    background:rgba(77,163,255,.1);
+}
+
+.day.partial{
+    border-color:rgba(255,200,87,.55);
+    background:rgba(255,200,87,.07);
+}
+
+.day.today{
+    outline:2px solid white;
+    outline-offset:-2px;
+}
+
+.dayValue{
+    font-size:7.5px;
+    color:var(--muted);
+    margin-top:2px;
+    font-weight:700;
+}
+
+/* ---------- evolução ---------- */
+
+.chart{
+    height:210px;
+    background:#131313;
+    border:1px solid var(--line);
+    border-radius:24px;
+    padding:16px;
+    overflow:hidden;
+}
+
+.chart svg{
+    width:100%;
+    height:100%;
+}
+
+.evoCards{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-top:12px;
+}
+
+.evoCard{
+    background:#131313;
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:15px 16px;
+}
+
+.evoCard small{
+    display:block;
+    color:var(--muted);
+    font-size:9.5px;
+    margin-bottom:6px;
+    text-transform:uppercase;
+    letter-spacing:.7px;
+    font-weight:700;
+}
+
+.evoCard strong{
+    font-size:17px;
+    letter-spacing:-.4px;
+    font-weight:800;
+    font-variant-numeric:tabular-nums;
+}
+
+/* ---------- conquistas ---------- */
+
+.achievement{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    background:#131313;
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:15px;
+    margin-bottom:10px;
+}
+
+.achievement.locked{
+    opacity:.4;
+}
+
+.badge{
+    width:46px;
+    height:46px;
+    border-radius:15px;
+    background:#1c1c1c;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:22px;
+    border:1px solid #2a2a2a;
+    flex-shrink:0;
+}
+
+.achievementText strong{
+    display:block;
+    font-size:13.5px;
+    letter-spacing:-.2px;
+    font-weight:800;
+}
+
+.achievementText span{
+    color:var(--muted);
+    font-size:11px;
+    font-weight:500;
+}
+
+/* ---------- menu ---------- */
+
+.menu{
+    display:grid;
+    gap:10px;
+}
+
+.menuItem{
+    width:100%;
+    padding:17px 18px;
+    border-radius:19px;
+    background:#131313;
+    border:1px solid var(--line);
+    color:white;
+    text-align:left;
+    display:flex;
+    align-items:center;
+    gap:14px;
+}
+
+.menuItem:active{
+    background:#181818;
+    transform:scale(.98);
+}
+
+.menuIcon{
+    width:42px;
+    height:42px;
+    border-radius:14px;
+    background:#1c1c1c;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:19px;
+    border:1px solid #2a2a2a;
+    flex-shrink:0;
+}
+
+.menuText{ flex:1; }
+
+.menuText strong{
+    display:block;
+    font-size:14px;
+    letter-spacing:-.2px;
+    font-weight:800;
+}
+
+.menuText span{
+    color:var(--muted);
+    font-size:11px;
+    font-weight:500;
+}
+
+.menuItem b{
+    color:#555;
+    font-size:20px;
+    font-weight:400;
+}
+
+/* ---------- nav inferior ---------- */
+
+.bottomNav{
+    position:fixed;
+    z-index:100;
+    bottom:14px;
+    left:50%;
+    transform:translateX(-50%);
+    width:min(calc(100% - 24px),580px);
+    height:70px;
+    border-radius:24px;
+    /* TROCA do backdrop-filter por fundo sólido — gigante ganho de performance */
+    background:#121212;
+    border:1px solid rgba(255,255,255,.08);
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    padding:7px;
+    box-shadow:0 20px 40px -12px rgba(0,0,0,.9);
+    will-change:transform;
+}
+
+.navBtn{
+    background:transparent;
+    color:#666;
+    border-radius:18px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:3px;
+    font-size:9.5px;
+    font-weight:700;
+    position:relative;
+}
+
+.navBtn span{
+    font-size:20px;
+    display:block;
+    line-height:1;
+    transition:transform .2s ease;
+}
+
+.navBtn.active{
+    color:white;
+    background:#242424;
+}
+
+.navBtn.active span{
+    color:var(--green);
+}
+
+.navBtn.active::before{
+    content:"";
+    position:absolute;
+    top:5px;
+    width:4px;
+    height:4px;
+    border-radius:50%;
+    background:var(--green);
+}
+
+/* ---------- modal ---------- */
+
+.modal{
+    position:fixed;
+    inset:0;
+    z-index:500;
+    background:rgba(0,0,0,.8);
+    display:none;
+    align-items:flex-end;
+}
+
+.modal.show{ display:flex; }
+
+.sheet{
+    width:100%;
+    max-width:600px;
+    margin:auto;
+    background:#111;
+    border:1px solid #2a2a2a;
+    border-bottom:none;
+    border-radius:30px 30px 0 0;
+    padding:26px 18px 32px;
+    animation:sheetIn .3s cubic-bezier(.2,.8,.2,1);
+    max-height:92vh;
+    overflow:auto;
+    will-change:transform;
+}
+
+@keyframes sheetIn{
+    from{transform:translateY(100%);}
+    to{transform:translateY(0);}
+}
+
+.sheetTop{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:22px;
+    margin-top:6px;
+}
+
+.sheet h2{
+    font-size:22px;
+    letter-spacing:-.6px;
+    font-weight:800;
+}
+
+/* ---------- toast ---------- */
+
+#toast{
+    position:fixed;
+    z-index:999;
+    left:50%;
+    bottom:96px;
+    transform:translate(-50%,20px);
+    background:#f4f4f4;
+    color:#080808;
+    padding:13px 20px;
+    border-radius:16px;
+    font-size:12.5px;
+    font-weight:800;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .3s ease, transform .3s ease;
+    max-width:90%;
+    text-align:center;
+    letter-spacing:-.2px;
+    box-shadow:0 12px 32px rgba(0,0,0,.6);
+}
+
+#toast.show{
+    opacity:1;
+    transform:translate(-50%,0);
+}
+
+/* ---------- complete ---------- */
+
+.completeOverlay{
+    position:fixed;
+    inset:0;
+    z-index:2000;
+    background:#050505;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:25px;
+}
+
+.completeOverlay.show{ display:flex; }
+
+.completeBox{
+    animation:completeIn .6s cubic-bezier(.2,.8,.2,1);
+    max-width:340px;
+}
+
+.completeIcon{
+    font-size:82px;
+    animation:bounce 1.1s infinite alternate;
+    display:inline-block;
+}
+
+.completeBox h1{
+    margin-top:18px;
+    font-size:36px;
+    letter-spacing:-1.4px;
+    font-weight:900;
+    background:linear-gradient(180deg,#fff 40%,#999);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    background-clip:text;
+}
+
+.completeBox p{
+    color:#999;
+    margin-top:12px;
+    line-height:1.55;
+    font-size:14px;
+    font-weight:500;
+}
+
+@keyframes completeIn{
+    from{opacity:0;transform:scale(.75);}
+    to{opacity:1;transform:scale(1);}
+}
+
+@keyframes bounce{
+    from{transform:translateY(0);}
+    to{transform:translateY(-12px);}
+}
+
+/* ---------- empty ---------- */
+
+.empty{
+    padding:36px 18px;
+    text-align:center;
+    color:var(--muted);
+    font-size:13px;
+    line-height:1.6;
+}
+
+.emptyIcon{
+    font-size:44px;
+    margin-bottom:12px;
+    display:inline-block;
+}
+
+/* ---------- responsivo ---------- */
+
+@media(min-width:600px){
+    .container{ padding-top:34px; }
+    .heroTitle{ font-size:30px; }
+    h1{ font-size:34px; }
+}
+
+::-webkit-scrollbar{ width:6px;height:6px; }
+::-webkit-scrollbar-track{ background:transparent; }
+::-webkit-scrollbar-thumb{
+    background:#2a2a2a;
+    border-radius:10px;
+}
+
+::selection{
+    background:rgba(56,226,127,.3);
+    color:#fff;
+}
+
+/* ---------- modo leve automático ---------- */
+/* em aparelhos fracos, desliga animações não essenciais */
+
+@media (prefers-reduced-motion: reduce){
+    *, *::before, *::after{
+        animation-duration:.01ms !important;
+        animation-iteration-count:1 !important;
+        transition-duration:.01ms !important;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div id="splash">
+    <div class="logoMark">M</div>
+    <div class="splashLoading"><span></span></div>
+    <div class="splashName" id="splashName"></div>
+    <div class="splashSub">disciplina transforma planos em realidade.</div>
+</div>
+
+<div id="app">
+<div class="container">
+
+<section class="screen active" id="screen-home">
+    <div class="top">
+        <div>
+            <div class="eyebrow">Sua evolução</div>
+            <h1>mentalidade</h1>
+        </div>
+        <button class="iconBtn" onclick="openSettings()">⚙️</button>
+    </div>
+    <div id="homeContent"></div>
+</section>
+
+<section class="screen" id="screen-objectives">
+    <div class="top">
+        <div>
+            <div class="eyebrow">Foco</div>
+            <h1>Objetivos</h1>
+        </div>
+        <button class="iconBtn" onclick="openObjectiveModal()">＋</button>
+    </div>
+    <div id="objectivesList"></div>
+</section>
+
+<section class="screen" id="screen-calendar">
+    <div class="top">
+        <div>
+            <div class="eyebrow">Histórico</div>
+            <h1>Calendário</h1>
+        </div>
+    </div>
+    <div id="calendarContent"></div>
+</section>
+
+<section class="screen" id="screen-evolution">
+    <div class="top">
+        <div>
+            <div class="eyebrow">Sua história</div>
+            <h1>Evolução</h1>
+        </div>
+    </div>
+    <div id="evolutionContent"></div>
+</section>
+
+<section class="screen" id="screen-more">
+    <div class="top">
+        <div>
+            <div class="eyebrow">Tudo do mentalidade</div>
+            <h1>Mais</h1>
+        </div>
+    </div>
+    <div class="menu">
+        <button class="menuItem" onclick="openObjectiveModal()">
+            <div class="menuIcon">🎯</div>
+            <div class="menuText">
+                <strong>Novo objetivo</strong>
+                <span>Crie uma nova meta</span>
+            </div>
+            <b>›</b>
+        </button>
+        <button class="menuItem" onclick="openSimulator()">
+            <div class="menuIcon">⚡</div>
+            <div class="menuText">
+                <strong>Simulador</strong>
+                <span>Veja quanto consegue adiantar</span>
+            </div>
+            <b>›</b>
+        </button>
+        <button class="menuItem" onclick="openAchievements()">
+            <div class="menuIcon">🏆</div>
+            <div class="menuText">
+                <strong>Conquistas</strong>
+                <span>Veja suas conquistas</span>
+            </div>
+            <b>›</b>
+        </button>
+        <button class="menuItem" onclick="openMentalidade()">
+            <div class="menuIcon">🧠</div>
+            <div class="menuText">
+                <strong>Mentalidade do dia</strong>
+                <span>Uma mensagem para continuar</span>
+            </div>
+            <b>›</b>
+        </button>
+    </div>
+</section>
+
+</div>
+
+<nav class="bottomNav">
+    <button class="navBtn active" data-screen="home" onclick="go('home')">
+        <span>⌂</span> Início
+    </button>
+    <button class="navBtn" data-screen="objectives" onclick="go('objectives')">
+        <span>🎯</span> Objetivos
+    </button>
+    <button class="navBtn" data-screen="calendar" onclick="go('calendar')">
+        <span>📅</span> Dias
+    </button>
+    <button class="navBtn" data-screen="evolution" onclick="go('evolution')">
+        <span>📈</span> Evolução
+    </button>
+    <button class="navBtn" data-screen="more" onclick="go('more')">
+        <span>☰</span> Mais
+    </button>
+</nav>
+
+</div>
+
+<div class="modal" id="modal">
+    <div class="sheet">
+        <div class="sheetTop">
+            <h2 id="modalTitle">Novo objetivo</h2>
+            <button class="iconBtn" onclick="closeModal()">×</button>
+        </div>
+        <div id="modalContent"></div>
+    </div>
+</div>
+
+<div id="toast"></div>
+
+<div class="completeOverlay" id="completeOverlay">
+    <div class="completeBox">
+        <div class="completeIcon">🏆</div>
+        <h1>Objetivo concluído!</h1>
+        <p id="completeText">Você conseguiu.</p>
+        <button class="primary" style="margin-top:28px" onclick="closeComplete()">
+            Continuar
+        </button>
+    </div>
+</div>
+
+<script>
+
+/* =====================================================
+   AUDIO ENGINE (versão leve)
+===================================================== */
+
+const AudioFX = (() => {
+    let ctx = null;
+    let enabled = true;
+
+    function init(){
+        if(ctx) return ctx;
+        try{
+            ctx = new (window.AudioContext || window.webkitAudioContext)();
+        }catch(e){ enabled = false; }
+        return ctx;
+    }
+
+    function unlock(){
+        const c = init();
+        if(c && c.state === "suspended") c.resume();
+    }
+
+    function tone({freq=440, duration=.15, type="sine", volume=.08, delay=0, glide=null}={}){
+        if(!enabled) return;
+        const c = init();
+        if(!c) return;
+        const t0 = c.currentTime + delay;
+        const osc = c.createOscillator();
+        const gain = c.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, t0);
+        if(glide) osc.frequency.exponentialRampToValueAtTime(glide, t0 + duration);
+        gain.gain.setValueAtTime(0, t0);
+        gain.gain.linearRampToValueAtTime(volume, t0 + 0.01);
+        gain.gain.exponentialRampToValueAtTime(0.0001, t0 + duration);
+        osc.connect(gain);
+        gain.connect(c.destination);
+        osc.start(t0);
+        osc.stop(t0 + duration + 0.05);
+    }
+
+    function letter(i=0){
+        const base = 520 + (i * 24);
+        tone({freq: base, duration:.08, type:"sine", volume:.04});
+    }
+
+    function loadTick(){ tone({freq: 900, duration:.03, type:"square", volume:.012}); }
+    function tap(){ tone({freq: 720, duration:.05, type:"triangle", volume:.04}); }
+    function confirm(){
+        tone({freq: 660, duration:.07, type:"triangle", volume:.055});
+        tone({freq: 990, duration:.08, type:"sine", volume:.03, delay:.04});
+    }
+    function softTap(){ tone({freq: 520, duration:.05, type:"sine", volume:.04}); }
+    function iconTap(){ tone({freq: 1100, duration:.04, type:"triangle", volume:.03}); }
+    function menuTap(){ tone({freq: 440, duration:.05, type:"sine", volume:.045}); }
+    function navTap(){ tone({freq: 380, duration:.045, type:"sine", volume:.045}); }
+    function modalOpen(){ tone({freq: 500, glide: 720, duration:.12, type:"sine", volume:.045}); }
+    function modalClose(){ tone({freq: 720, glide: 480, duration:.12, type:"sine", volume:.045}); }
+    function success(){
+        [523.25, 659.25, 783.99].forEach((f,i)=>{
+            tone({freq: f, duration:.2, type:"sine", volume:.055, delay: i * 0.08});
+        });
+    }
+    function error(){ tone({freq: 240, glide: 180, duration:.2, type:"sawtooth", volume:.045}); }
+    function fanfare(){
+        [523.25, 659.25, 783.99, 1046.5].forEach((f,i)=>{
+            tone({freq: f, duration:.35, type:"triangle", volume:.07, delay: i * 0.12});
+        });
+    }
+
+    return {
+        unlock, letter, loadTick, tap, confirm, softTap, iconTap,
+        menuTap, navTap, modalOpen, modalClose, success, error, fanfare
+    };
+})();
+
+["touchstart","click","keydown"].forEach(evt=>{
+    document.addEventListener(evt, AudioFX.unlock, {once:true});
+});
+
+/* som em botões (usa event delegation) */
+document.addEventListener("click", (e)=>{
+    const btn = e.target.closest("button");
+    if(!btn) return;
+    if(btn.classList.contains("navBtn")) return AudioFX.navTap();
+    if(btn.classList.contains("primary")) return AudioFX.confirm();
+    if(btn.classList.contains("secondary")) return AudioFX.softTap();
+    if(btn.classList.contains("iconBtn")) return AudioFX.iconTap();
+    if(btn.classList.contains("menuItem")) return AudioFX.menuTap();
+    AudioFX.tap();
+}, true);
+
+/* =====================================================
+   DADOS
+===================================================== */
+
+const STORAGE_KEY = "mentalidade_beta_v3";
+let data = { objectives: [], activeId: null };
+let selectedObjectiveId = null;
+
+function loadData(){
+    try{
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if(saved) data = JSON.parse(saved);
+    }catch(e){ console.log("Erro", e); }
+}
+
+function saveData(){
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+/* =====================================================
+   UTILITÁRIOS
+===================================================== */
+
+function money(v){
+    return Number(v || 0).toLocaleString("pt-BR",{
+        style:"currency", currency:"BRL"
+    });
+}
+
+function dateBR(d){ return new Date(d).toLocaleDateString("pt-BR"); }
+
+function dateISO(d){
+    const x = new Date(d);
+    return `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,"0")}-${String(x.getDate()).padStart(2,"0")}`;
+}
+
+function addDays(d, n){
+    const x = new Date(d);
+    x.setDate(x.getDate()+n);
+    return x;
+}
+
+function daysBetween(a,b){
+    const o = new Date(a), t = new Date(b);
+    o.setHours(0,0,0,0);
+    t.setHours(0,0,0,0);
+    return Math.round((t-o)/86400000);
+}
+
+function clamp(n,mn,mx){ return Math.max(mn,Math.min(mx,n)); }
+function todayISO(){ return dateISO(new Date()); }
+
+/* =====================================================
+   CÁLCULOS
+===================================================== */
+
+function getTotal(o){ return Number(o.target || 0); }
+
+function getSaved(o){
+    return (o.records || []).reduce((s,r)=>s+Number(r.amount||0),0);
+}
+
+function getRemaining(o){ return Math.max(0,getTotal(o)-getSaved(o)); }
+
+function getBaseDays(o){ return Math.max(1,Number(o.workDays || 1)); }
+
+function getBaseDaily(o){ return getTotal(o)/getBaseDays(o); }
+
+function getStartDate(o){ return new Date(o.startDate); }
+
+function calculateObjective(obj){
+
+    const total = getTotal(obj);
+    const saved = getSaved(obj);
+    const remaining = getRemaining(obj);
+    const start = getStartDate(obj);
+    const now = new Date();
+    const elapsed = Math.max(0,daysBetween(start,now));
+    const baseDays = getBaseDays(obj);
+    const baseDaily = getBaseDaily(obj);
+    const passedDays = Math.min(baseDays, elapsed+1);
+    const expected = Math.min(total, passedDays*baseDaily);
+
+    let missed = 0;
+    for(let i=0;i<passedDays;i++){
+        const d = dateISO(addDays(start,i));
+        const dayVal = (obj.records||[])
+            .filter(r=>r.date===d)
+            .reduce((s,r)=>s+Number(r.amount||0),0);
+        if(dayVal < baseDaily && d < todayISO()) missed++;
+    }
+
+    const aheadMoney = Math.max(0, saved-expected);
+    const aheadDays = Math.floor(aheadMoney/baseDaily);
+
+    let plannedDays = baseDays + missed - aheadDays;
+    plannedDays = Math.max(1, plannedDays);
+
+    if(saved < total && daysBetween(start,now)+1 > plannedDays){
+        plannedDays = daysBetween(start,now)+1;
+    }
+
+    let estimatedRemainingDays = Math.ceil(remaining / Math.max(baseDaily,0.01));
+    if(remaining<=0) estimatedRemainingDays = 0;
+
+    const recentRecords = (obj.records||[])
+        .filter(r=>daysBetween(r.date,todayISO())>=0)
+        .slice(-7);
+
+    let averageRecent = 0;
+    if(recentRecords.length){
+        averageRecent =
+            recentRecords.reduce((s,r)=>s+Number(r.amount||0),0) /
+            Math.max(1,new Set(recentRecords.map(r=>r.date)).size);
+    }
+
+    if(averageRecent > baseDaily){
+        estimatedRemainingDays = Math.ceil(remaining/averageRecent);
+    }
+
+    const estimatedEnd = remaining<=0 ? now : addDays(now,estimatedRemainingDays);
+    const progress = total>0 ? clamp(saved/total*100,0,100) : 0;
+
+    return {
+        total, saved, remaining, baseDaily, aheadDays, missed,
+        progress, estimatedEnd, estimatedRemainingDays
+    };
+}
+
+/* =====================================================
+   NAVEGAÇÃO
+===================================================== */
+
+function go(screen){
+    document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+    const t = document.getElementById("screen-"+screen);
+    if(t) t.classList.add("active");
+
+    document.querySelectorAll(".navBtn").forEach(b=>{
+        b.classList.toggle("active", b.dataset.screen===screen);
+    });
+
+    if(screen==="home") renderHome();
+    if(screen==="objectives") renderObjectives();
+    if(screen==="calendar") renderCalendar();
+    if(screen==="evolution") renderEvolution();
+}
+
+/* =====================================================
+   HOME
+===================================================== */
+
+function getActive(){
+    if(!data.objectives.length) return null;
+    let obj = data.objectives.find(o=>o.id===data.activeId);
+    if(!obj){
+        obj = data.objectives[0];
+        data.activeId = obj.id;
+        saveData();
+    }
+    return obj;
+}
+
+function renderHome(){
+
+    const area = document.getElementById("homeContent");
+    const obj = getActive();
+
+    if(!obj){
+        area.innerHTML = `
+        <div class="hero">
+            <div class="heroTitle">Comece seu primeiro objetivo.</div>
+            <div class="heroDate">Transforme uma vontade em um plano.</div>
+            <button class="primary" style="margin-top:22px" onclick="openObjectiveModal()">
+                ＋ Criar meu objetivo
+            </button>
+        </div>
+        <div class="empty">
+            <div class="emptyIcon">🎯</div>
+            <div>Seu progresso vai aparecer aqui.</div>
+        </div>
+        `;
+        return;
+    }
+
+    const c = calculateObjective(obj);
+    const today = todayISO();
+    const todayValue = (obj.records||[])
+        .filter(r=>r.date===today)
+        .reduce((s,r)=>s+Number(r.amount||0),0);
+
+    const todayTarget = c.baseDaily;
+    const todayDiff = todayValue - todayTarget;
+
+    let status = "Ainda falta";
+    if(todayValue >= todayTarget){
+        status = todayDiff>0 ? `+${money(todayDiff)} adiantado` : "Meta cumprida";
+    }
+
+    const endText = dateBR(c.estimatedEnd);
+
+    const aheadText =
+        c.aheadDays>0 ? `${c.aheadDays} dia(s) adiantado`
+        : c.missed>0 ? `${c.missed} dia(s) perdido(s)`
+        : "No ritmo";
+
+    area.innerHTML = `
+    <div class="hero">
+        <div class="heroTop">
+            <div>
+                <div class="heroTitle">${escapeHTML(obj.name)}</div>
+                <div class="heroDate">Começou em ${dateBR(obj.startDate)}</div>
+            </div>
+            <button class="iconBtn" onclick="openRegisterModal('${obj.id}')">＋</button>
+        </div>
+        <div class="mainProgress">
+            <span style="width:${c.progress}%"></span>
+        </div>
+        <div style="margin-top:10px;display:flex;justify-content:space-between;color:#999;font-size:11px;font-variant-numeric:tabular-nums;">
+            <span>${money(c.saved)}</span>
+            <span>${c.progress.toFixed(1)}%</span>
+            <span>${money(c.total)}</span>
+        </div>
+        <div class="heroStats">
+            <div class="stat">
+                <small>Falta</small>
+                <strong>${money(c.remaining)}</strong>
+            </div>
+            <div class="stat">
+                <small>Previsão</small>
+                <strong>${endText}</strong>
+            </div>
+        </div>
+    </div>
+
+    <div class="sectionTitle">
+        <h2>Hoje</h2>
+        <span>${dateBR(new Date())}</span>
+    </div>
+
+    <div class="todayCard">
+        <div class="muted" style="font-size:12px">Meta do dia</div>
+        <div class="todayAmount">${money(todayTarget)}</div>
+        <div class="muted" style="font-size:12px">${status}</div>
+        <div class="todayGrid">
+            <div class="todayMini">
+                <small>Registrado hoje</small>
+                <b>${money(todayValue)}</b>
+            </div>
+            <div class="todayMini">
+                <small>Situação</small>
+                <b>${aheadText}</b>
+            </div>
+        </div>
+        <button class="primary" style="margin-top:14px" onclick="openRegisterModal('${obj.id}')">
+            ＋ Registrar valor
+        </button>
+        <button class="secondary" style="margin-top:9px" onclick="openSimulator('${obj.id}')">
+            ⚡ Simular valor
+        </button>
+    </div>
+
+    <div class="sectionTitle">
+        <h2>Seu objetivo</h2>
+        <span>até ${endText}</span>
+    </div>
+
+    <div class="objectiveCard">
+        <div class="objectiveHead">
+            <div class="objectiveName">${escapeHTML(obj.name)}</div>
+            <div class="objectiveAmount">${money(c.total)}</div>
+        </div>
+        <div class="miniProgress"><span style="width:${c.progress}%"></span></div>
+        <div class="objectiveInfo">
+            <span>${money(c.saved)} realizado</span>
+            <span>${c.progress.toFixed(0)}%</span>
+        </div>
+    </div>
+    `;
+}
+
+/* =====================================================
+   OBJETIVOS
+===================================================== */
+
+function renderObjectives(){
+
+    const area = document.getElementById("objectivesList");
+
+    if(!data.objectives.length){
+        area.innerHTML = `
+        <div class="empty">
+            <div class="emptyIcon">🎯</div>
+            <p>Você ainda não criou nenhum objetivo.</p>
+            <button class="primary" style="margin-top:20px" onclick="openObjectiveModal()">
+                Criar objetivo
+            </button>
+        </div>
+        `;
+        return;
+    }
+
+    area.innerHTML = data.objectives.map(obj=>{
+        const c = calculateObjective(obj);
+        const active = obj.id === data.activeId;
+        return `
+        <div class="objectiveCard" onclick="selectObjective('${obj.id}')"
+            style="${active?'border-color:rgba(56,226,127,.5)':''}">
+            <div class="objectiveHead">
+                <div>
+                    <div class="objectiveName">${escapeHTML(obj.name)}</div>
+                    <div style="color:#777;font-size:10px;margin-top:4px;font-weight:600;">
+                        ${active?"★ Objetivo atual":"Toque para selecionar"}
+                    </div>
+                </div>
+                <div class="objectiveAmount">${money(c.total)}</div>
+            </div>
+            <div class="miniProgress"><span style="width:${c.progress}%"></span></div>
+            <div class="objectiveInfo">
+                <span>${money(c.saved)} / ${money(c.total)}</span>
+                <span>${c.progress.toFixed(0)}%</span>
+            </div>
+            <div style="margin-top:12px;display:flex;justify-content:space-between;align-items:center;">
+                <span style="font-size:11px;color:#999;font-weight:500;">
+                    Previsão: ${dateBR(c.estimatedEnd)}
+                </span>
+                <button onclick="event.stopPropagation();openRegisterModal('${obj.id}')"
+                    style="background:#222;color:#fff;border:1px solid #303030;border-radius:12px;padding:9px 13px;font-size:11px;font-weight:800;">
+                    ＋ Registrar
+                </button>
+            </div>
+        </div>
+        `;
+    }).join("");
+}
+
+function selectObjective(id){
+    data.activeId = id;
+    saveData();
+    const obj = data.objectives.find(o=>o.id===id);
+    toast(`"${obj.name}" agora é seu objetivo principal.`);
+    AudioFX.success();
+    renderObjectives();
+    renderHome();
+}
+
+/* =====================================================
+   CRIAR OBJETIVO
+===================================================== */
+
+function openObjectiveModal(){
+    openModal("Novo objetivo", `
+        <div class="formCard">
+            <div class="formGroup">
+                <label class="label">Nome do objetivo</label>
+                <input id="objName" class="input" placeholder="Ex.: Minha moto" maxlength="40">
+            </div>
+            <div class="formGroup">
+                <label class="label">Quanto você quer alcançar?</label>
+                <input id="objTarget" class="input moneyInput" type="number" min="1" step="0.01" placeholder="10000">
+            </div>
+            <div class="formGroup">
+                <label class="label">Em quantos dias trabalhados?</label>
+                <input id="objDays" class="input" type="number" min="1" step="1" placeholder="90">
+            </div>
+            <div class="formGroup">
+                <label class="label">Data de início</label>
+                <input id="objDate" class="input" type="date" value="${todayISO()}">
+            </div>
+            <button class="primary" onclick="createObjective()">Criar objetivo</button>
+        </div>
+    `);
+}
+
+function createObjective(){
+    const name = document.getElementById("objName").value.trim();
+    const target = Number(document.getElementById("objTarget").value);
+    const days = Number(document.getElementById("objDays").value);
+    const date = document.getElementById("objDate").value;
+
+    if(!name){ toast("Digite o nome do objetivo.", true); return; }
+    if(!target || target<=0){ toast("Digite um valor válido.", true); return; }
+    if(!days || days<=0){ toast("Digite a quantidade de dias.", true); return; }
+    if(!date){ toast("Escolha a data de início.", true); return; }
+
+    const obj = {
+        id:"obj_"+Date.now(),
+        name, target, workDays:days, startDate:date,
+        records:[], createdAt:new Date().toISOString()
+    };
+
+    data.objectives.push(obj);
+    data.activeId = obj.id;
+    saveData();
+
+    closeModal();
+    renderHome();
+    renderObjectives();
+
+    AudioFX.success();
+    toast("Objetivo criado com sucesso! 🎯");
+}
+
+/* =====================================================
+   REGISTRAR
+===================================================== */
+
+function openRegisterModal(id){
+    selectedObjectiveId = id;
+    const obj = data.objectives.find(o=>o.id===id);
+    if(!obj) return;
+
+    openModal("Registrar valor", `
+        <div class="formCard">
+            <div style="margin-bottom:18px;padding:14px 15px;border-radius:16px;background:#0b0b0b;border:1px solid #222;">
+                <div style="color:#888;font-size:10px;text-transform:uppercase;letter-spacing:.6px;font-weight:700;margin-bottom:3px;">
+                    Objetivo
+                </div>
+                <strong style="font-size:15px">${escapeHTML(obj.name)}</strong>
+            </div>
+            <div class="formGroup">
+                <label class="label">Quanto você colocou hoje?</label>
+                <input id="registerAmount" class="input moneyInput" type="number" min="0" step="0.01" placeholder="60">
+            </div>
+            <div class="formGroup">
+                <label class="label">Data</label>
+                <input id="registerDate" class="input" type="date" value="${todayISO()}">
+            </div>
+            <div style="padding:14px 15px;border-radius:16px;background:rgba(56,226,127,.06);border:1px solid rgba(56,226,127,.18);margin-bottom:16px;color:#bbb;font-size:11.5px;line-height:1.55;font-weight:500;">
+                ✨ O valor será usado para recalcular automaticamente
+                seu progresso e sua previsão de término.
+            </div>
+            <button class="primary" onclick="registerValue()">Registrar valor</button>
+        </div>
+    `);
+}
+
+function registerValue(){
+    const amount = Number(document.getElementById("registerAmount").value);
+    const date = document.getElementById("registerDate").value;
+
+    const obj = data.objectives.find(o=>o.id===selectedObjectiveId);
+    if(!obj) return;
+
+    if(!amount || amount<=0){ toast("Digite um valor maior que zero.", true); return; }
+    if(!date){ toast("Escolha a data.", true); return; }
+
+    obj.records.push({
+        id:"reg_"+Date.now(),
+        amount, date,
+        createdAt:new Date().toISOString()
+    });
+
+    saveData();
+    const before = calculateObjective(obj);
+
+    closeModal();
+    renderHome();
+    renderObjectives();
+    renderCalendar();
+    renderEvolution();
+
+    AudioFX.success();
+    toast(`+${money(amount)} registrado!`);
+
+    if(before.progress >= 100) setTimeout(()=>showComplete(obj), 500);
+}
+
+/* =====================================================
+   SIMULADOR
+===================================================== */
+
+function openSimulator(id){
+    selectedObjectiveId = id || data.activeId || (data.objectives[0] && data.objectives[0].id);
+    if(!selectedObjectiveId){ toast("Crie um objetivo primeiro.", true); return; }
+
+    const obj = data.objectives.find(o=>o.id===selectedObjectiveId);
+    if(!obj) return;
+
+    openModal("Simulador", `
+        <div class="formCard">
+            <div style="color:#999;font-size:12px;margin-bottom:10px;font-weight:500;">
+                Se você colocar este valor:
+            </div>
+            <input id="simAmount" class="input moneyInput" type="number" min="0" step="0.01"
+                placeholder="200" oninput="calculateSimulation()">
+            <div id="simulationResult" class="simResult">Digite um valor para simular.</div>
+            <div style="color:#666;font-size:10.5px;margin-top:14px;line-height:1.6;font-weight:500;">
+                💡 A simulação não registra nada no objetivo.
+            </div>
+        </div>
+    `);
+}
+
+function calculateSimulation(){
+    const amount = Number(document.getElementById("simAmount").value);
+    const area = document.getElementById("simulationResult");
+    const obj = data.objectives.find(o=>o.id===selectedObjectiveId);
+
+    if(!obj || !amount){
+        area.innerHTML = "Digite um valor para simular.";
+        return;
+    }
+
+    const c = calculateObjective(obj);
+    const newSaved = Math.min(c.total, c.saved+amount);
+    const newRemaining = Math.max(0, c.total-newSaved);
+    const daysAdvanced = Math.floor(amount/Math.max(c.baseDaily,0.01));
+    const newDays = Math.max(0, c.estimatedRemainingDays - daysAdvanced);
+    const newDate = newRemaining<=0 ? new Date() : addDays(new Date(),newDays);
+    const percent = c.total ? clamp(newSaved/c.total*100,0,100) : 0;
+
+    area.innerHTML = `
+        <div style="color:#999;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;">
+            Com ${money(amount)}:
+        </div>
+        <strong>
+            ${daysAdvanced>0 ? `Você pode adiantar ${daysAdvanced} dia(s).` : "Você avançaria seu objetivo."}
+        </strong>
+        <div class="simRows">
+            <div class="simRow"><span>Novo progresso</span><b>${percent.toFixed(1)}%</b></div>
+            <div class="simRow"><span>Ficaria faltando</span><b>${money(newRemaining)}</b></div>
+            <div class="simRow"><span>Nova previsão</span><b>${dateBR(newDate)}</b></div>
+        </div>
+    `;
+}
+
+/* =====================================================
+   CALENDÁRIO
+===================================================== */
+
+function renderCalendar(){
+    const area = document.getElementById("calendarContent");
+    const obj = getActive();
+
+    if(!obj){
+        area.innerHTML = `
+        <div class="empty">
+            <div class="emptyIcon">📅</div>
+            Crie um objetivo para começar seu calendário.
+        </div>
+        `;
+        return;
+    }
+
+    const c = calculateObjective(obj);
+    const start = getStartDate(obj);
+    const year = start.getFullYear();
+    const month = start.getMonth();
+    const first = new Date(year,month,1);
+    const last = new Date(year,month+1,0);
+
+    let html = `
+    <div class="calendarCard">
+        <div class="calendarHead">
+            <div>
+                <strong>${first.toLocaleDateString("pt-BR",{month:"long",year:"numeric"})}</strong>
+                <div style="color:#777;font-size:10.5px;margin-top:4px;font-weight:500;">
+                    ${escapeHTML(obj.name)}
+                </div>
+            </div>
+            <div style="color:var(--green);font-size:13px;font-weight:900;letter-spacing:-.3px;">
+                ${c.progress.toFixed(0)}%
+            </div>
+        </div>
+        <div class="calendarGrid">
+    `;
+
+    ["D","S","T","Q","Q","S","S"].forEach(d=>{
+        html += `<div class="week">${d}</div>`;
+    });
+
+    const offset = first.getDay();
+    for(let i=0;i<offset;i++) html += `<div></div>`;
+
+    /* agrupa registros por data em 1 passada — performance */
+    const recordsByDate = {};
+    (obj.records||[]).forEach(r=>{
+        recordsByDate[r.date] = (recordsByDate[r.date]||0) + Number(r.amount||0);
+    });
+
+    for(let day=1;day<=last.getDate();day++){
+        const iso = dateISO(new Date(year,month,day));
+        const value = recordsByDate[iso] || 0;
+
+        let cls = "";
+        if(value >= c.baseDaily) cls = value > c.baseDaily ? "over" : "done";
+        else if(value > 0) cls = "partial";
+        if(iso === todayISO()) cls += " today";
+
+        html += `
+        <div class="day ${cls}" title="${money(value)}">
+            <span>${day}</span>
+            ${value>0 ? `<span class="dayValue">${money(value)}</span>` : ""}
+        </div>
+        `;
+    }
+
+    html += `
+        </div>
+        <div style="margin-top:16px;display:flex;gap:14px;flex-wrap:wrap;padding-top:14px;border-top:1px solid rgba(255,255,255,.05);">
+            <span style="font-size:10px;color:#888;font-weight:600">🟢 cumpriu</span>
+            <span style="font-size:10px;color:#888;font-weight:600">🔵 acima</span>
+            <span style="font-size:10px;color:#888;font-weight:600">🟡 parcial</span>
+        </div>
+    </div>
+
+    <div class="sectionTitle"><h2>Resumo</h2></div>
+
+    <div class="evoCards">
+        <div class="evoCard"><small>Meta diária</small><strong>${money(c.baseDaily)}</strong></div>
+        <div class="evoCard"><small>Falta</small><strong>${money(c.remaining)}</strong></div>
+        <div class="evoCard"><small>Dias adiantados</small><strong>${c.aheadDays}</strong></div>
+        <div class="evoCard"><small>Dias perdidos</small><strong>${c.missed}</strong></div>
+    </div>
+    `;
+
+    area.innerHTML = html;
+}
+
+/* =====================================================
+   EVOLUÇÃO
+===================================================== */
+
+function renderEvolution(){
+    const area = document.getElementById("evolutionContent");
+    const obj = getActive();
+
+    if(!obj){
+        area.innerHTML = `
+        <div class="empty">
+            <div class="emptyIcon">📈</div>
+            Seu gráfico aparecerá depois que você criar um objetivo.
+        </div>
+        `;
+        return;
+    }
+
+    const c = calculateObjective(obj);
+    const records = [...(obj.records||[])];
+    records.sort((a,b)=>a.date.localeCompare(b.date));
+
+    let running = 0;
+    const points = records.map(r=>{
+        running += Number(r.amount||0);
+        return {date:r.date, value:running};
+    });
+
+    let path = "", areaPath = "";
+    const width = 320, height = 150;
+
+    if(points.length){
+        const max = Math.max(c.total, 1);
+        points.forEach((p,i)=>{
+            const x = points.length===1 ? width/2 : (i/(points.length-1))*width;
+            const y = height - (p.value/max)*height;
+            path += `${i===0?"M":"L"} ${x} ${y} `;
+        });
+        const firstX = points.length===1 ? width/2 : 0;
+        const lastX = points.length===1 ? width/2 : width;
+        areaPath = path + `L ${lastX} ${height} L ${firstX} ${height} Z`;
+    }
+
+    area.innerHTML = `
+    <div class="chart">
+        <svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="none">
+            <defs>
+                <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#38e27f" stop-opacity=".25"/>
+                    <stop offset="100%" stop-color="#38e27f" stop-opacity="0"/>
+                </linearGradient>
+                <linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stop-color="#1dbb61"/>
+                    <stop offset="100%" stop-color="#5ff09c"/>
+                </linearGradient>
+            </defs>
+            <line x1="0" y1="${height}" x2="${width}" y2="${height}" stroke="#292929" stroke-width="1"/>
+            <line x1="0" y1="${height/2}" x2="${width}" y2="${height/2}" stroke="#1d1d1d" stroke-width="1" stroke-dasharray="2 4"/>
+            ${areaPath ? `<path d="${areaPath}" fill="url(#areaGrad)"/>` : ""}
+            <path d="${path}" fill="none" stroke="url(#lineGrad)" stroke-width="4"
+                stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    </div>
+
+    <div class="evoCards">
+        <div class="evoCard"><small>Objetivo</small><strong>${money(c.total)}</strong></div>
+        <div class="evoCard"><small>Realizado</small><strong>${money(c.saved)}</strong></div>
+        <div class="evoCard"><small>Progresso</small><strong>${c.progress.toFixed(1)}%</strong></div>
+        <div class="evoCard"><small>Previsão</small><strong>${dateBR(c.estimatedEnd)}</strong></div>
+    </div>
+
+    <div class="sectionTitle"><h2>Ritmo atual</h2></div>
+
+    <div class="todayCard">
+        <div style="color:#999;font-size:12px;font-weight:500;">Você precisa, em média, de</div>
+        <div class="todayAmount">${money(c.baseDaily)}</div>
+        <div style="color:#999;font-size:12px;font-weight:500;">por dia para manter o planejamento.</div>
+        <button class="primary" style="margin-top:18px" onclick="openSimulator('${obj.id}')">
+            ⚡ Testar outro valor
+        </button>
+    </div>
+    `;
+}
+
+/* =====================================================
+   CONQUISTAS
+===================================================== */
+
+function openAchievements(){
+    const obj = getActive();
+    if(!obj){ toast("Crie um objetivo primeiro.", true); return; }
+
+    const c = calculateObjective(obj);
+    const records = obj.records || [];
+    const uniqueDays = new Set(records.map(r=>r.date)).size;
+
+    const list = [
+        {icon:"🎯", title:"Primeiro passo", text:"Criou seu primeiro objetivo", ok:true},
+        {icon:"💰", title:"Primeiro registro", text:"Registrou seu primeiro valor", ok:records.length>=1},
+        {icon:"🔥", title:"3 dias de sequência", text:"Registrou valores em 3 dias", ok:uniqueDays>=3},
+        {icon:"🚀", title:"Primeiro adiantamento", text:"Ficou pelo menos 1 dia à frente", ok:c.aheadDays>=1},
+        {icon:"💎", title:"R$ 1.000 alcançados", text:"Acumulou pelo menos R$ 1.000", ok:c.saved>=1000},
+        {icon:"🏆", title:"Objetivo concluído", text:"Chegou a 100%", ok:c.progress>=100}
+    ];
+
+    openModal("Conquistas", list.map(a=>`
+        <div class="achievement ${a.ok?"":"locked"}">
+            <div class="badge">${a.icon}</div>
+            <div class="achievementText">
+                <strong>${a.title}</strong>
+                <span>${a.text}</span>
+            </div>
+            <div style="margin-left:auto;font-size:15px;font-weight:900;color:${a.ok?'var(--green)':'#555'};">
+                ${a.ok?"✓":"🔒"}
+            </div>
+        </div>
+    `).join(""));
+}
+
+/* =====================================================
+   MENTALIDADE
+===================================================== */
+
+function openMentalidade(){
+    const frases = [
+        "O importante não é começar perfeito. É continuar.",
+        "Um pequeno avanço hoje ainda é um avanço.",
+        "Disciplina é fazer mesmo quando ninguém está vendo.",
+        "Não compare seu começo com o resultado de outra pessoa.",
+        "Seu objetivo fica mais perto a cada registro.",
+        "Se puder adiantar hoje, adiante.",
+        "Consistência vence a pressa.",
+        "Você não precisa fazer tudo hoje. Só precisa não parar."
+    ];
+
+    const index = new Date().getDate() % frases.length;
+
+    openModal("Mentalidade do dia", `
+        <div style="padding:30px 18px 20px;text-align:center;">
+            <div style="font-size:56px;margin-bottom:22px;display:inline-block;">🧠</div>
+            <div style="font-size:22px;font-weight:900;line-height:1.35;letter-spacing:-.6px;">
+                “${frases[index]}”
+            </div>
+            <div style="margin-top:22px;color:#666;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;">
+                mentalidade
+            </div>
+        </div>
+    `);
+}
+
+/* =====================================================
+   CONFIGURAÇÕES
+===================================================== */
+
+function openSettings(){
+    openModal("Configurações", `
+        <div class="menu">
+            <button class="menuItem" onclick="clearData()">
+                <div class="menuIcon">🗑️</div>
+                <div class="menuText">
+                    <strong>Apagar todos os dados</strong>
+                    <span>Remove objetivos e registros deste aparelho</span>
+                </div>
+            </button>
+        </div>
+        <div style="text-align:center;color:#555;font-size:10px;margin-top:24px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;">
+            mentalidade • versão beta
+        </div>
+    `);
+}
+
+function clearData(){
+    if(!confirm("Tem certeza? Todos os objetivos e registros serão apagados.")) return;
+    localStorage.removeItem(STORAGE_KEY);
+    data = {objectives:[], activeId:null};
+    closeModal();
+    renderHome();
+    renderObjectives();
+    toast("Dados apagados.");
+}
+
+/* =====================================================
+   MODAL
+===================================================== */
+
+function openModal(title, content){
+    document.getElementById("modalTitle").textContent = title;
+    document.getElementById("modalContent").innerHTML = content;
+    document.getElementById("modal").classList.add("show");
+    AudioFX.modalOpen();
+}
+
+function closeModal(){
+    document.getElementById("modal").classList.remove("show");
+    AudioFX.modalClose();
+}
+
+/* =====================================================
+   COMPLETE
+===================================================== */
+
+function showComplete(obj){
+    const c = calculateObjective(obj);
+    document.getElementById("completeText").innerHTML =
+        `Você alcançou <strong>${money(c.total)}</strong>.<br>
+         Objetivo concluído com ${c.progress.toFixed(0)}% de progresso.`;
+    document.getElementById("completeOverlay").classList.add("show");
+    AudioFX.fanfare();
+}
+
+function closeComplete(){
+    document.getElementById("completeOverlay").classList.remove("show");
+    AudioFX.tap();
+}
+
+/* =====================================================
+   TOAST
+===================================================== */
+
+let toastTimer;
+
+function toast(msg, isError){
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    if(isError) AudioFX.error();
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(()=>t.classList.remove("show"), 2400);
+}
+
+/* =====================================================
+   ESCAPE
+===================================================== */
+
+function escapeHTML(text){
+    return String(text)
+        .replace(/&/g,"&amp;").replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;").replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+}
+
+/* =====================================================
+   SPLASH
+===================================================== */
+
+function startSplash(){
+    const name = "mentalidade";
+    const container = document.getElementById("splashName");
+    container.innerHTML = "";
+
+    name.split("").forEach((letter, i)=>{
+        const span = document.createElement("span");
+        span.textContent = letter;
+        span.style.animationDelay = (1.4 + i*0.05) + "s";
+        container.appendChild(span);
+        setTimeout(()=>AudioFX.letter(i), (1.4 + i*0.05) * 1000);
+    });
+
+    setTimeout(()=>AudioFX.loadTick(), 1300);
+
+    setTimeout(()=>{
+        document.getElementById("splash").classList.add("hide");
+        document.getElementById("app").style.display = "block";
+        document.getElementById("app").classList.add("revealing");
+        renderHome();
+    }, 3200);
+}
+
+/* =====================================================
+   INIT
+===================================================== */
+
+loadData();
+startSplash();
+
+/* NÃO re-renderiza a cada 60s — só quando o dia mudar */
+let lastDay = todayISO();
+setInterval(()=>{
+    const now = todayISO();
+    if(now !== lastDay){
+        lastDay = now;
+        renderHome();
+        renderCalendar();
+        renderEvolution();
+    }
+}, 60000);
+
+document.getElementById("modal").addEventListener("click", function(e){
+    if(e.target === this) closeModal();
+});
+
+</script>
+
+</body>
+</html>
